@@ -6,7 +6,7 @@ import {
     Paper
 } from "@material-ui/core/";
 import Skeleton from '@material-ui/lab/Skeleton';
-
+import Slide from '@material-ui/core/Slide';
 
 
 import CourseApi from "../../microservices/courses";
@@ -86,6 +86,7 @@ class UdemyRenderer extends React.Component {
                     lessonList.map((lesson, index) => {
                         return (
                             <>
+                             <Slide direction="up" in={true}>
                                 <Paper elevation={6} style={this.state.selectedLessonIndex == (index || 0) ? {
                                     padding: "10px",
                                     margin: "10px", 
@@ -101,7 +102,10 @@ class UdemyRenderer extends React.Component {
                                     fontWeight: "500", 
                                     padding: "10px",
                                     cursor:"pointer"
-                                    }} onClick={() => this._getVideoListByLessonName(lesson.path, index)}><p>{lesson.name}</p></Paper>
+                                    }} onClick={() => this._getVideoListByLessonName(lesson.path, index)}>
+                                        <p>{lesson.name}</p>
+                                    </Paper>
+                             </Slide>
                             </>
                         )
                     })
@@ -113,7 +117,8 @@ class UdemyRenderer extends React.Component {
     _gernerateVideoList = () => {
         
         return this.state.videoList.map((video, index) => {
-            return <Paper
+            return <Slide direction="up" in={true}>
+                <Paper
                 elevation={6}
                 style={this.state.selectedVideoIndex == (index || 0) ?
                     {
@@ -141,6 +146,7 @@ class UdemyRenderer extends React.Component {
                         video.name
                         .replace(".mp4", "")
                     }</p></Paper>
+                </Slide>
         })
     }
 

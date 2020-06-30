@@ -9,7 +9,8 @@ import {
 import Alert from '@material-ui/lab/Alert';
 import Backdrop from '@material-ui/core/Backdrop';
 import TextField from '@material-ui/core/TextField';
-
+import Zoom from '@material-ui/core/Zoom';
+import Slide from '@material-ui/core/Slide';
 
 import CourseApi from "../../microservices/courses";
 import { fromPairs } from "lodash";
@@ -75,16 +76,18 @@ class CourseList extends React.Component{
             return this.state.courses.map( course => {
             return(
                 <Grid item lg={3} xs={12}>
-                    <Paper style={{height:"100px", margin:"10px", textAlign:"center", cursor:"pointer"}} elevation={3} onClick={() => this._getLessonsByCourseName(course.path)}>
-                        <a style={{
-                            verticalAlign:"middle",
-                            lineHeight:"90px",
-                            margin:"auto",
-                            
-                        }}>
-                        {course.name}
-                        </a>
-                        </Paper>
+                    <Zoom in={true}>
+                        <Paper style={{height:"100px", margin:"10px", textAlign:"center", cursor:"pointer"}} elevation={3} onClick={() => this._getLessonsByCourseName(course.path)}>
+                            <a style={{
+                                verticalAlign:"middle",
+                                lineHeight:"90px",
+                                margin:"auto",
+                                
+                            }}>
+                            {course.name}
+                            </a>
+                            </Paper>
+                    </Zoom>
                 </Grid>
             )
         } )
@@ -98,21 +101,23 @@ class CourseList extends React.Component{
             return this.state.courses.map( course =>{
                 return(
                     <Grid item lg={3} xs={12}>
-                         <a style={{textDecoration:"none"}} target="_blank" href={`http://files.bytelabs.ml/${course.path}`}>
-                            <Paper style={{height:"100px", margin:"10px", textAlign:"center", cursor:"pointer"}} elevation={3} >
-                            <a style={{
-                                verticalAlign:"middle",
-                                lineHeight:"90px",
-                                margin:"auto"
-                            }}>{
-                                course.name
-                                .replace("UDACITY", " ")
-                                .replace("udacity", " ")
-                                .replace("Udacity", " ")
-                                .replace("-", " ")                        
-                            }</a>
-                                </Paper>
-                         </a>
+                         <Zoom in={true}>
+                            <a style={{textDecoration:"none"}} target="_blank" href={`http://files.bytelabs.ml/${course.path}`}>
+                                <Paper style={{height:"100px", margin:"10px", textAlign:"center", cursor:"pointer"}} elevation={3} >
+                                <a style={{
+                                    verticalAlign:"middle",
+                                    lineHeight:"90px",
+                                    margin:"auto"
+                                }}>{
+                                    course.name
+                                    .replace("UDACITY", " ")
+                                    .replace("udacity", " ")
+                                    .replace("Udacity", " ")
+                                    .replace("-", " ")                        
+                                }</a>
+                                    </Paper>
+                            </a>
+                         </Zoom>
                     </Grid>
             )
         })
