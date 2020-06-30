@@ -47,7 +47,18 @@ class UdemyRenderer extends React.Component {
             }
             let videoList = await (await CourseApi.getLessonsListByProgramName(payload)).data.data
             videoList = videoList.filter(video => video.path.includes(".mp4"));
+
             let resourceList = videoList.filter(video => !video.path.includes(".mp4"));
+            videoList = videoList.map(video => {
+                const lessonSequence = video.name.split(".")[0]
+                return {
+                    ...video,
+                    lessonSequence
+                }
+            }).sort((a, b) => {
+                return a.lessonSequence - b.lessonSequence
+            });
+    
             this.setState({
                 videoList,
                 selectedVideo: videoList[0].path,
@@ -100,17 +111,8 @@ class UdemyRenderer extends React.Component {
     }
 
     _gernerateVideoList = () => {
-        const videoList = this.state.videoList.map(video => {
-            const lessonSequence = video.name.split(".")[0]
-            return {
-                ...video,
-                lessonSequence
-            }
-        }).sort((a, b) => {
-            return a.lessonSequence - b.lessonSequence
-        });
-
-        return videoList.map((video, index) => {
+        
+        return this.state.videoList.map((video, index) => {
             return <Paper
                 elevation={6}
                 style={this.state.selectedVideoIndex == (index || 0) ?
@@ -165,15 +167,18 @@ class UdemyRenderer extends React.Component {
                             style={{ width: "100%", height: "100%" }}
                             controls key={this.state.selectedVideo}
                             onEnded={() => {
-                                if(this.state.selectedVideoIndex !== this.state.videoList.length - 1){
-                                    
+
+                                if(this.state.selectedVideoIndex == this.state.videoList.length - 1){
+                                    return 
                                 }
 
                                 if (this.state.selectedVideoIndex !== this.state.videoList.length) {
                                     this.setState({
-                                        selectedVideo: _Get(this.state,"videoList[this.state.selectedVideoIndex + 1].path"),
+                                        selectedVideo: this.state.videoList[this.state.selectedVideoIndex + 1].path,
                                         selectedVideoIndex: this.state.selectedVideoIndex + 1
                                     })
+                                } else {
+                                    return ""
                                 }
                             }}
                         >
@@ -186,6 +191,9 @@ class UdemyRenderer extends React.Component {
                                 <Grid item lg={6}>
                                     <Button
                                         onClick={() => {
+                                            if(this.state.selectedVideoIndex == this.state.videoList.length - 1){
+                                                return 
+                                            }
                                             this.setState({
                                                 selectedVideo: this.state.videoList[this.state.selectedVideoIndex - 1].path,
                                                 selectedVideoIndex: this.state.selectedVideoIndex - 1
@@ -201,12 +209,13 @@ class UdemyRenderer extends React.Component {
                                 <Grid item lg={6} style={{ textAlign: "right" }}>
                                     <Button
                                         onClick={() => {
-                                            if(_Get(this.state,"videoList[this.state.selectedVideoIndex + 1].path")){
-                                                this.setState({
-                                                    selectedVideo: this.state.videoList[this.state.selectedVideoIndex + 1].path,
-                                                    selectedVideoIndex: this.state.selectedVideoIndex + 1
-                                                });
+                                            if(this.state.selectedVideoIndex == this.state.videoList.length - 1){
+                                                return 
                                             }
+                                            this.setState({
+                                                selectedVideo: this.state.videoList[this.state.selectedVideoIndex + 1].path,
+                                                selectedVideoIndex: this.state.selectedVideoIndex + 1
+                                            })
                                         }}
                                         disabled={this.state.selectedVideoIndex == this.state.videoList.length - 1 ? true : false}
                                         color="primary"
