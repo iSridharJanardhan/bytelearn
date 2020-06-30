@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import Alert from '@material-ui/lab/Alert';
 import Backdrop from '@material-ui/core/Backdrop';
+import TextField from '@material-ui/core/TextField';
 
 
 import CourseApi from "../../microservices/courses";
@@ -39,6 +40,7 @@ class CourseList extends React.Component{
             }
             this.setState({
                 courses : courses.data.data,
+                bufferCourses:courses.data.data,
                 loading:false
             })
         }catch(error){
@@ -150,7 +152,26 @@ class CourseList extends React.Component{
         return <Alert severity="error">{this.state.errorMessage}</Alert>
         }
         return (
-            <div style={{margin:"10px"}}>
+            <div style={{margin:"20px"}}>
+                <TextField 
+                    onChange={(event) => {
+                        const searchedValue = event.target.value;
+                        if(searchedValue){
+                            const courses = this.state.courses.filter( course => course.name.toLowerCase().includes(searchedValue.toLowerCase()) );
+                            this.setState({
+                                courses
+                            });
+                        }else{
+                            this.setState({
+                                courses:this.state.bufferCourses
+                            });
+                        }
+                    }}
+                    label="Search by name"
+                    style={{
+                        marginBottom:"10px"
+                    }}
+                />
                 {this._generateCourseList()}
             </div>
         )

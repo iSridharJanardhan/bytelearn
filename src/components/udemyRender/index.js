@@ -47,6 +47,7 @@ class UdemyRenderer extends React.Component {
             }
             let videoList = await (await CourseApi.getLessonsListByProgramName(payload)).data.data
             videoList = videoList.filter(video => video.path.includes(".mp4"));
+            let resourceList = videoList.filter(video => !video.path.includes(".mp4"));
             this.setState({
                 videoList,
                 selectedVideo: videoList[0].path,
@@ -76,10 +77,19 @@ class UdemyRenderer extends React.Component {
                             <>
                                 <Paper elevation={6} style={this.state.selectedLessonIndex == (index || 0) ? {
                                     padding: "10px",
-                                    margin: "10px", backgroundColor: "#3f51b5", padding: "10px", color: 'white'
+                                    margin: "10px", 
+                                    backgroundColor: 
+                                    "#3f51b5", 
+                                    padding: "10px", 
+                                    color: 'white',
+                                    cursor:"pointer"
                                 } : {
                                     padding: "10px",
-                                        margin: "10px", color: "", fontWeight: "500", padding: "10px"
+                                    margin: "10px", 
+                                    color: "", 
+                                    fontWeight: "500", 
+                                    padding: "10px",
+                                    cursor:"pointer"
                                     }} onClick={() => this._getVideoListByLessonName(lesson.path, index)}><p>{lesson.name}</p></Paper>
                             </>
                         )
@@ -125,7 +135,10 @@ class UdemyRenderer extends React.Component {
                         selectedVideo: video.path,
                         selectedVideoIndex: index
                     })
-                }}><p>{video.name}</p></Paper>
+                }}><p>{
+                        video.name
+                        .replace(".mp4", "")
+                    }</p></Paper>
         })
     }
 
