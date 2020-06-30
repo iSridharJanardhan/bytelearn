@@ -28,7 +28,7 @@ class UdemyRenderer extends React.Component {
         this.setState({
             selectedLessonIndex: 0
         })
-        if (this.props.lessonList) {
+        if (this.props.lessonList && this.props.lessonList.length) {
             this._getVideoListByLessonName(this.props.lessonList[0].path)
         }
 
