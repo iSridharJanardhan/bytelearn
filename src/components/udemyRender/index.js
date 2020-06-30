@@ -165,14 +165,15 @@ class UdemyRenderer extends React.Component {
                             style={{ width: "100%", height: "100%" }}
                             controls key={this.state.selectedVideo}
                             onEnded={() => {
+                                if(this.state.selectedVideoIndex !== this.state.videoList.length - 1){
+                                    
+                                }
 
                                 if (this.state.selectedVideoIndex !== this.state.videoList.length) {
                                     this.setState({
-                                        selectedVideo: this.state.videoList[this.state.selectedVideoIndex + 1].path,
+                                        selectedVideo: _Get(this.state,"videoList[this.state.selectedVideoIndex + 1].path"),
                                         selectedVideoIndex: this.state.selectedVideoIndex + 1
                                     })
-                                } else {
-                                    return ""
                                 }
                             }}
                         >
@@ -200,12 +201,14 @@ class UdemyRenderer extends React.Component {
                                 <Grid item lg={6} style={{ textAlign: "right" }}>
                                     <Button
                                         onClick={() => {
-                                            this.setState({
-                                                selectedVideo: this.state.videoList[this.state.selectedVideoIndex + 1].path,
-                                                selectedVideoIndex: this.state.selectedVideoIndex + 1
-                                            })
+                                            if(_Get(this.state,"videoList[this.state.selectedVideoIndex + 1].path")){
+                                                this.setState({
+                                                    selectedVideo: this.state.videoList[this.state.selectedVideoIndex + 1].path,
+                                                    selectedVideoIndex: this.state.selectedVideoIndex + 1
+                                                });
+                                            }
                                         }}
-                                        disabled={this.state.selectedVideoIndex == this.state.videoList.length ? true : false}
+                                        disabled={this.state.selectedVideoIndex == this.state.videoList.length - 1 ? true : false}
                                         color="primary"
                                         variant="contained"
                                     >
