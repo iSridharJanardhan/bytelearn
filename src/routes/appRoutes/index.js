@@ -3,7 +3,8 @@ import { withRouter } from "react-router";
 import {
     Switch,
     Route,
-    Redirect
+    Redirect,
+    HashRouter
 } from "react-router-dom";  
 
 import CourseList from "../../containers/courseList";
@@ -15,7 +16,8 @@ class AppRoutes extends React.Component{
     }
     render(){
         return(
-            <Switch>
+            <HashRouter>
+                 <div>
                 <Route exact path="/course/:courseType">
                     <CourseList/>
                 </Route>
@@ -25,7 +27,8 @@ class AppRoutes extends React.Component{
                 <Route path="*">
                     <Redirect to="/course/Udemy" />
                 </Route>
-            </Switch>
+            </div>
+            </HashRouter>
         )
     }
 }

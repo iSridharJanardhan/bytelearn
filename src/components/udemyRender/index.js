@@ -101,7 +101,11 @@ class UdemyRenderer extends React.Component {
             return a.lessonSequence - b.lessonSequence
         });
         return (
-            <>
+            <div
+            style={{
+                height:"70vh",
+                overflowY:"auto"
+            }}>
                 {
                     lessonList.map((lesson, index) => {
                         return (
@@ -130,44 +134,54 @@ class UdemyRenderer extends React.Component {
                         )
                     })
                 }
-            </>
+            </div>
         )
     }
 
     _gernerateVideoList = () => {
-
-        return this.state.videoList.map((video, index) => {
-            return <Slide direction="up" in={true}>
-                <Paper
-                    elevation={6}
-                    style={this.state.selectedVideoIndex == (index || 0) ?
-                        {
-                            padding: "10px",
-                            margin: "10px",
-                            cursor: "pointer",
-                            color: "white",
-                            fontWeight: "500",
-                            backgroundColor: "#3f51b5"
-                        }
-                        :
-                        {
-                            padding: "10px",
-                            margin: "10px",
-                            cursor: "pointer",
-                            color: "",
-                            fontWeight: "500"
-                        }}
-                    onClick={() => {
-                        this.setState({
-                            selectedVideo: video.path,
-                            selectedVideoIndex: index
-                        })
-                    }}><p>{
-                        video.name
-                            .replace(".mp4", "")
-                    }</p></Paper>
-            </Slide>
-        })
+        
+        return(
+            <div
+            style={{
+                height:"70vh",
+                overflowY:"auto"
+            }}>
+                {
+                    this.state.videoList.map((video, index) => {
+                        return <Slide direction="up" in={true}>
+                            <Paper
+                            elevation={6}
+                            style={this.state.selectedVideoIndex == (index || 0) ?
+                                {
+                                    padding: "10px",
+                                    margin: "10px",
+                                    cursor: "pointer",
+                                    color: "white",
+                                    fontWeight: "500",
+                                    backgroundColor: "#3f51b5"
+                                }
+                                :
+                                {
+                                    padding: "10px",
+                                    margin: "10px",
+                                    cursor: "pointer",
+                                    color: "",
+                                    fontWeight: "500"
+                                }}
+                            onClick={() => {
+                                this.setState({
+                                    selectedVideo: video.path,
+                                    selectedVideoIndex: index
+                                })
+                            }}><p>{
+                                    video.name
+                                    .replace(".mp4", "")
+                                }</p></Paper>
+                            </Slide>
+                    })
+                }
+            </div>
+        )
     }
 
     _generateVideoRenderer() {

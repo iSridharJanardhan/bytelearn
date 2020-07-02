@@ -7,17 +7,16 @@ import {
     Tabs,
     Tab,
     Button,
-    Snackbar 
+    Snackbar
 } from "@material-ui/core";
 import MuiAlert from '@material-ui/lab/Alert';
 import {
     courses as CourseList
 } from "../../constants/coursesList";
 import AppRoutes from "../../routes/appRoutes/";
-
 import CourseApi from "../../microservices/courses";
 import LoginApi from "../../microservices/login";
-import { withRouter } from "react-router";
+import { withRouter, Redirect } from "react-router";
 import TextField from '@material-ui/core/TextField';
 
 
@@ -33,13 +32,13 @@ class Dashboard extends React.Component {
         isError: false,
         tabSelected: 0,
         isAuthenticated: false,
-        error:false,
-        errorInfo:""
+        error: false,
+        errorInfo: ""
     }
 
     async componentDidMount() {
         const token = localStorage.getItem("bytelearn-auth");
-        if(!token){
+        if (token) {
             const courseType = this.props.location.pathname;
             const payload = {
                 courseType: "Udemy"
@@ -69,6 +68,7 @@ class Dashboard extends React.Component {
             }
         }
 
+
     }
 
 
@@ -77,7 +77,8 @@ class Dashboard extends React.Component {
             tabSelected: newValue
         })
         const selectedCourse = CourseList[newValue].value;
-        this.props.history.push(`/course/${selectedCourse}`);
+        // this.props.history.push(`/course/${selectedCourse}`);
+        window.location.href = `/#/course/${selectedCourse}`
     }
 
     _loginFormHandler = (value, key) => {
@@ -91,12 +92,20 @@ class Dashboard extends React.Component {
         payload.username = this.state.username
         payload.password = this.state.password
         const response = await LoginApi.login(payload);
-        if(!response.data.status){
+        if (!response.data.status) {
             localStorage.setItem("bytelearn-auth", response.data.token)
-        }else{
             this.setState({
-                error:true,
-                errorInfo:response.data.error
+                isAuthenticated: true,
+                username: "",
+                password: ""
+            })
+        } else {
+            this.setState({
+                error: true,
+                errorInfo: response.data.error,
+                username: "",
+                password: ""
+
             })
         }
     }
@@ -150,6 +159,10 @@ class Dashboard extends React.Component {
         )
     }
 
+
+
+
+
     render() {
         return (
             <AppBar
@@ -167,8 +180,11 @@ class Dashboard extends React.Component {
                     {
                         this.state.isAuthenticated ?
                             <Button onClick={() => {
+                                this.setState({
+                                    isAuthenticated: false
+                                })
                                 localStorage.removeItem('bytelearn-auth');
-                                this.props.history.push('/')
+                                return <Redirect to="/login" />
                             }} color="inherit">Logout</Button>
                             :
                             ""
@@ -200,12 +216,13 @@ class Dashboard extends React.Component {
                             <AppRoutes />
                         </>
                         :
+
                         <h1>
                             {this._loginForm()}
                         </h1>
                 }
-                <Snackbar open={this.state.error} onClose={() => this.setState({error: false, errorInfo:""})} autoHideDuration={3000}>
-                    <MuiAlert onClose={() => this.setState({error: false, errorInfo:""})} severity="error">
+                <Snackbar open={this.state.error} onClose={() => this.setState({ error: false, errorInfo: "" })} autoHideDuration={3000}>
+                    <MuiAlert onClose={() => this.setState({ error: false, errorInfo: "" })} severity="error">
                         {this.state.errorInfo}
                     </MuiAlert>
                 </Snackbar>
