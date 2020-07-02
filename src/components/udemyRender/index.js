@@ -26,7 +26,7 @@ class UdemyRenderer extends React.Component {
         this.state = {
             videoList: [],
             selectedLessonIndex: 0,
-            tabSelected : 0,
+            tabSelected : '1',
             resourceList : []
         }
     }
