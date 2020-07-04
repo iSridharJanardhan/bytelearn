@@ -46,9 +46,10 @@ class UdemyRenderer extends React.Component {
                 path: lessonPath
             }
             let videoList = await (await CourseApi.getLessonsListByProgramName(payload)).data.data
-            videoList = videoList.filter(video => video.path.includes(".mp4"));
+            videoList = videoList.filter(video => video.path.includes(".mp4") || video.path.includes(".mkv"));
 
             let resourceList = videoList.filter(video => !video.path.includes(".mp4"));
+            debugger
             videoList = videoList.map(video => {
                 const lessonSequence = video.name.split(".")[0]
                 return {
@@ -72,7 +73,8 @@ class UdemyRenderer extends React.Component {
 
     _generateLessonsList = () => {
         const lessonList = this.props.lessonList.map(lesson => {
-            const lessonSequence = lesson.name.split(".")[0]
+            const lessonSequence = lesson.name.split(".")[0] || lesson.name.split(" ")[0]
+            debugger
             return {
                 ...lesson,
                 lessonSequence
@@ -156,6 +158,7 @@ class UdemyRenderer extends React.Component {
                             }}><p>{
                                     video.name
                                     .replace(".mp4", "")
+                                    .replace(".mkv", "")
                                 }</p></Paper>
                             </Slide>
                     })
