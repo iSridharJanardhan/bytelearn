@@ -3,10 +3,15 @@ import { withRouter } from "react-router";
 import _Get from "lodash/get";
 import {
     Grid,
-    Paper
+    Paper,
+    Tabs,
+    Tab,
+    Typography
 } from "@material-ui/core/";
 import Skeleton from '@material-ui/lab/Skeleton';
 import Slide from '@material-ui/core/Slide';
+import TabPanel from '@material-ui/lab/TabPanel';
+import TabContext from '@material-ui/lab/TabContext';
 
 
 import CourseApi from "../../microservices/courses";
@@ -20,7 +25,9 @@ class UdemyRenderer extends React.Component {
         super(props);
         this.state = {
             videoList: [],
-            selectedLessonIndex:0
+            selectedLessonIndex: 0,
+            tabSelected : '1',
+            resourceList : []
         }
     }
 
@@ -31,6 +38,13 @@ class UdemyRenderer extends React.Component {
         if (this.props.lessonList && this.props.lessonList.length) {
             this._getVideoListByLessonName(this.props.lessonList[0].path)
         }
+
+    }
+
+    _handleTabSelection = (event, newValue) => {
+        this.setState({
+            tabSelected : newValue
+        })
 
     }
 
@@ -45,11 +59,16 @@ class UdemyRenderer extends React.Component {
                 courseType,
                 path: lessonPath
             }
-            let videoList = await (await CourseApi.getLessonsListByProgramName(payload)).data.data
-            videoList = videoList.filter(video => video.path.includes(".mp4") || video.path.includes(".mkv"));
+            let responseObject = await (await CourseApi.getLessonsListByProgramName(payload)).data.data
+            let videoList = responseObject.filter(video => video.path.includes(".mp4")  || video.path.includes(".mkv")) ;
 
-            let resourceList = videoList.filter(video => !video.path.includes(".mp4"));
-            debugger
+            //resources (html, pdf etc)
+            this.setState({
+                resourceList : responseObject.filter(video => !video.path.includes(".mp4"))
+            })
+            console.log(this.state.resourceList)
+            console.log(this.state.selectedLessonIndex)
+
             videoList = videoList.map(video => {
                 const lessonSequence = video.name.split(".")[0]
                 return {
@@ -59,7 +78,7 @@ class UdemyRenderer extends React.Component {
             }).sort((a, b) => {
                 return a.lessonSequence - b.lessonSequence
             });
-    
+
             this.setState({
                 videoList,
                 selectedVideo: videoList[0].path,
@@ -92,26 +111,26 @@ class UdemyRenderer extends React.Component {
                     lessonList.map((lesson, index) => {
                         return (
                             <>
-                             <Slide direction="up" in={true}>
-                                <Paper elevation={6} style={this.state.selectedLessonIndex == (index || 0) ? {
-                                    padding: "10px",
-                                    margin: "10px", 
-                                    backgroundColor: 
-                                    "#3f51b5", 
-                                    padding: "10px", 
-                                    color: 'white',
-                                    cursor:"pointer"
-                                } : {
-                                    padding: "10px",
-                                    margin: "10px", 
-                                    color: "", 
-                                    fontWeight: "500", 
-                                    padding: "10px",
-                                    cursor:"pointer"
-                                    }} onClick={() => this._getVideoListByLessonName(lesson.path, index)}>
+                                <Slide direction="up" in={true}>
+                                    <Paper elevation={6} style={this.state.selectedLessonIndex == (index || 0) ? {
+                                        padding: "10px",
+                                        margin: "10px",
+                                        backgroundColor:
+                                            "#3f51b5",
+                                        padding: "10px",
+                                        color: 'white',
+                                        cursor: "pointer"
+                                    } : {
+                                            padding: "10px",
+                                            margin: "10px",
+                                            color: "",
+                                            fontWeight: "500",
+                                            padding: "10px",
+                                            cursor: "pointer"
+                                        }} onClick={() => this._getVideoListByLessonName(lesson.path, index)}>
                                         <p>{lesson.name}</p>
                                     </Paper>
-                             </Slide>
+                                </Slide>
                             </>
                         )
                     })
@@ -191,8 +210,8 @@ class UdemyRenderer extends React.Component {
                             controls key={this.state.selectedVideo}
                             onEnded={() => {
 
-                                if(this.state.selectedVideoIndex == this.state.videoList.length - 1){
-                                    return 
+                                if (this.state.selectedVideoIndex == this.state.videoList.length - 1) {
+                                    return
                                 }
 
                                 if (this.state.selectedVideoIndex !== this.state.videoList.length) {
@@ -207,6 +226,7 @@ class UdemyRenderer extends React.Component {
                         >
                             <source key={this.state.selectedVideo} src={`${fileRenderingUrl}/${this.state.selectedVideo}`} type="video/mp4" />
                         </video>
+
                     </div>
                     {
                         this.state.videoList.length > 1 ?
@@ -214,8 +234,8 @@ class UdemyRenderer extends React.Component {
                                 <Grid item lg={6}>
                                     <Button
                                         onClick={() => {
-                                            if(this.state.selectedVideoIndex == this.state.videoList.length - 1){
-                                                return 
+                                            if (this.state.selectedVideoIndex == this.state.videoList.length - 1) {
+                                                return
                                             }
                                             this.setState({
                                                 selectedVideo: this.state.videoList[this.state.selectedVideoIndex - 1].path,
@@ -232,8 +252,8 @@ class UdemyRenderer extends React.Component {
                                 <Grid item lg={6} style={{ textAlign: "right" }}>
                                     <Button
                                         onClick={() => {
-                                            if(this.state.selectedVideoIndex == this.state.videoList.length - 1){
-                                                return 
+                                            if (this.state.selectedVideoIndex == this.state.videoList.length - 1) {
+                                                return
                                             }
                                             this.setState({
                                                 selectedVideo: this.state.videoList[this.state.selectedVideoIndex + 1].path,
@@ -251,6 +271,65 @@ class UdemyRenderer extends React.Component {
                             :
                             ""
                     }
+                    <Paper
+                        style={{
+                            boxShadow: '0px 0px 0px'
+                        }}
+                    >
+                        <div key={this.state.tabSelected}>
+                            <Typography align='center' variant='subtitle1'>Resources</Typography>
+                            <TabContext value={this.state.tabSelected}>
+                                <Tabs
+                                    default="select"
+                                    indicatorColor="primary"
+                                    textColor="primary"
+                                    centered
+                                    value={this.state.tabSelected}
+                                    onChange={this._handleTabSelection}
+                                >
+                                    <Tab label="HTML" value="1"/>
+                                    <Tab label="PDF" value="2"/>
+                                    <Tab label="Download" value="3"/>
+                                </Tabs>
+                                <TabPanel value="1">
+                                    {this.state.resourceList.filter(video => video.path.includes(".html"))
+                                    .map(resource => {
+                                        console.log('resource', resource)
+                                        return (
+                                            <iframe src={`http://files.bytelabs.ml/${resource.path}`} title="resource" height='500px' width='100%'> 
+                                            </iframe>
+                                        )
+                                    })}
+                                </TabPanel>
+                                <TabPanel value="2">
+                                    {this.state.resourceList.filter(video => video.path.includes(".pdf"))
+                                        .map(resource => {
+                                            console.log('resource pdf', resource)
+                                            return (
+                                                <>
+                                                <Typography>{resource.name}</Typography>
+                                                <iframe src={`http://files.bytelabs.ml/${resource.path}`} title="resource" height='500px' width='100%' style={{'marginBottom' : '100px'}}>
+                                                </iframe>
+                                                </>
+                                            )
+                                        })}
+                                </TabPanel>
+                                <TabPanel value="3">
+                                    {this.state.resourceList.filter(video => video.path.includes(".zip") || video.path.includes(".rar") || video.path.includes(".7z"))
+                                            .map(resource => {
+                                                return (
+                                                    <>
+                                                        <div style={{'display' : 'flex'}}>
+                                                            <Typography>{resource.name}</Typography>
+                                                            <a href={`http://files.bytelabs.ml/${resource.path}`} style={{'cursor' : 'pointer', 'color' : 'blue'}}>  download  </a>
+                                                        </div>
+                                                    </>
+                                                )
+                                            })}
+                                </TabPanel>
+                            </TabContext>
+                        </div>
+                    </Paper>
                 </Grid>
                 <Grid item lg={3}>
                     <h3 style={{ textAlign: "center" }}>
