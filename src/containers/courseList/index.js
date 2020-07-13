@@ -11,6 +11,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import TextField from '@material-ui/core/TextField';
 import Zoom from '@material-ui/core/Zoom';
 import Slide from '@material-ui/core/Slide';
+import EbookRender from "../../components/ebookRender";
 
 import CourseApi from "../../microservices/courses";
 import { fromPairs } from "lodash";
@@ -141,6 +142,12 @@ class CourseList extends React.Component{
                     <Grid container>
                         {this._generateUdacityList()}
                     </Grid> 
+                )
+            case "EBook":
+                return(
+                    <EbookRender 
+                        books={this.state.courses}
+                    />
                 )
             default:
                 return ""

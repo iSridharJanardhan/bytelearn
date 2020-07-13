@@ -6,6 +6,10 @@ const courses = [
     {
         label : "Udacity",
         value : "Udacity"
+    },
+    {
+        label : "E-Book",
+        value : "EBook"
     }
 ]
 
